@@ -96,10 +96,8 @@ object OnlineCoursePlatform:
   private trait EnrollmentInCourse:
     val course: Course
     var students: Sequence[String]
-    def unapply(e: EnrollmentInCourse): Option[(Course, Sequence[String])]
 
-  private class EnrollmentInCourseImpl(override val course: Course, var students: Sequence[String]) extends EnrollmentInCourse:
-    def unapply(e: EnrollmentInCourse): Option[(Course, Sequence[String])] = Some(e.course, e.students)
+  private class EnrollmentInCourseImpl(override val course: Course, var students: Sequence[String]) extends EnrollmentInCourse
 
   private class OnlineCoursePlatformImpl(
     private var _enrollments: Sequence[EnrollmentInCourse]
