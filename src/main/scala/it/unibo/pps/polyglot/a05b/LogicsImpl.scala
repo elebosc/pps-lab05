@@ -16,22 +16,29 @@ class LogicsImpl(private val size: Int) extends Logics:
   private def randomPosition: Int = random.nextInt(size - 2) + 1
 
   override def tick(): Unit = tickCount += 1
+  
+  private def isWithinCurrentRange(delta: Int): Boolean = Math.abs(delta) <= tickCount
 
-  private def isOnVerticalAxis(x: Int, y: Int): Boolean =
-    x == initial.x && Math.abs(y - initial.y) <= tickCount
+  private def isOnCurrentVerticalAxis(x: Int, y: Int): Boolean =
+    val isOnVerticalAxis = x == initial.x
+    isOnVerticalAxis && isWithinCurrentRange(y - initial.y)
 
-  private def isOnHorizontalAxis(x: Int, y: Int): Boolean =
-    y == initial.y && Math.abs(x - initial.x) <= tickCount
+  private def isOnCurrentHorizontalAxis(x: Int, y: Int): Boolean =
+    val isOnHorizontalAxis = y == initial.y
+    isOnHorizontalAxis && isWithinCurrentRange(x - initial.x)
 
-  private def isOnForwardDiagonal(x: Int, y: Int): Boolean =
-    x - y == initial.x - initial.y && Math.abs(x - initial.x) <= tickCount
+  private def isOnCurrentForwardDiagonal(x: Int, y: Int): Boolean =
+    val isOnForwardDiagonal = x - y == initial.x - initial.y
+    isOnForwardDiagonal && isWithinCurrentRange(x - initial.x)
 
-  private def isOnBackwardDiagonal(x: Int, y: Int): Boolean =
-    x + y == initial.x + initial.y && Math.abs(x - initial.x) <= tickCount
+  private def isOnCurrentBackwardDiagonal(x: Int, y: Int): Boolean =
+    val isOnBackwardDiagonal = x + y == initial.x + initial.y
+    isOnBackwardDiagonal && isWithinCurrentRange(x - initial.x)
 
   override def hasElement(x: Int, y: Int): Boolean =
-    isOnVerticalAxis(x, y) || isOnHorizontalAxis(x, y) || isOnForwardDiagonal(x, y) || isOnBackwardDiagonal(x, y)
+    isOnCurrentVerticalAxis(x, y) || isOnCurrentHorizontalAxis(x, y) || 
+    isOnCurrentForwardDiagonal(x, y) || isOnCurrentBackwardDiagonal(x, y)
 
-  private def isOutOfBound(p: Int) = p - tickCount < 0 || p + tickCount >= size
+  private def isOutOfBound(p: Int): Boolean = p - tickCount < 0 || p + tickCount >= size
 
   override def isOver: Boolean = isOutOfBound(initial.x) || isOutOfBound(initial.y)
