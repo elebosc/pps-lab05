@@ -26,6 +26,14 @@ object Sequences: // Essentially, generic linkedlists
     def empty[A]: Sequence[A] = Nil()
 
     extension [A](sequence: Sequence[A])
+
+      def length: Int =
+        @tailrec
+        def _length(s: Sequence[A])(acc: Int): Int = s match
+          case Nil() => acc
+          case Cons(_, t) => _length(t)(acc + 1)
+        _length(sequence)(0)
+
       def head: Optional[A] = sequence match
         case Cons(h, _) => Just(h)
         case _ => Empty()

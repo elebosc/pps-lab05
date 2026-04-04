@@ -20,9 +20,12 @@ object Streams:
     def apply[A](as: A*): Stream[A] =
       if as.isEmpty then empty()
       else cons(as.head, apply(as.tail*))
+
     def iterate[A](start: A)(f: A => A): Stream[A] =
       cons(start, iterate(f(start))(f))
+
     extension [A](stream: Stream[A])
+
       def toList: Sequence[A] = stream match
         case Stream.Cons(h, t) => Sequence.Cons(h(), t().toList)
         case _ => Sequence.Nil()
@@ -44,6 +47,13 @@ object Streams:
         case (Stream.Cons(head, tail), n) if n > 0 => Stream.cons(head(), tail().take(n - 1))
         case _ => Stream.Empty()
 
+      def takeWhile(pred: A => Boolean): Stream[A] = 
+        def _takeWhile(s: Stream[A])(pred: A => Boolean): Stream[A] = s match
+          case Empty() => Empty()
+          case Cons(h, t) if pred(h()) => cons(h(), _takeWhile(t())(pred))
+          case _ => Empty()
+        _takeWhile(stream)(pred)
+    
   end Stream
 
 @main def tryStreams =
