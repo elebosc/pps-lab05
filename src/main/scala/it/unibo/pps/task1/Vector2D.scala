@@ -1,4 +1,4 @@
-package it.unibo.pps.ex
+package it.unibo.pps.task1
 
 import scala.math.sqrt // Needed for magnitude calculation
 

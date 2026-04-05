@@ -1,4 +1,4 @@
-package it.unibo.pps.ex
+package it.unibo.pps.task1
 
 import it.unibo.pps.util.Optionals.Optional, Optional.*
 import it.unibo.pps.util.Sequences.*, Sequence.* // Assuming Sequence and related methods are here
@@ -19,6 +19,9 @@ object Course:
   // Factory method for creating Course instances
   def apply(courseId: String, title: String, instructor: String, category: String): Course =
     CourseImpl(courseId, title, instructor, category)
+
+  def unapply(course: Course): (String, String, String, String) =
+    (course.courseId, course.title, course.instructor, course.category)
 
 /**
  * Manages courses and student enrollments on an online learning platform.
