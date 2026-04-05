@@ -35,7 +35,7 @@ object Vector2D:
 
     override def dot(other: Vector2D): Double = this.x * other.x + this.y * other.y
 
-    override def magnitude: Double = Math.sqrt(this.x * this.x + this.y * this.y)
+    override def magnitude: Double = sqrt(this.x * this.x + this.y * this.y)
 
   // Factory method to create Vector2D instances
   def apply(x: Double, y: Double): Vector2D = Vector2DImpl(x, y)

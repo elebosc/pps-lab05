@@ -1,7 +1,8 @@
 package it.unibo.pps.task1
 
 import it.unibo.pps.util.Optionals.Optional, Optional.*
-import it.unibo.pps.util.Sequences.*, Sequence.* // Assuming Sequence and related methods are here
+import it.unibo.pps.util.Sequences.*, Sequence.{empty => _, *} // Assuming Sequence and related methods are here
+import it.unibo.pps.util.Set, Set.*
 
 // Represents a course offered on the platform
 trait Course:
@@ -96,21 +97,17 @@ end OnlineCoursePlatform
 
 object OnlineCoursePlatform:
 
-  private trait EnrollmentInCourse:
+  private trait EnrollmentsInCourse:
     val course: Course
-    var students: Sequence[String]
+    var students: Set[String]
 
-  private class EnrollmentInCourseImpl(override val course: Course, var students: Sequence[String]) extends EnrollmentInCourse
+  private class EnrollmentsInCourseImpl(override val course: Course, var students: Set[String] = empty) extends EnrollmentsInCourse
 
-  private class OnlineCoursePlatformImpl(
-    private var _enrollments: Sequence[EnrollmentInCourse]
-  ) extends OnlineCoursePlatform:
+  private class OnlineCoursePlatformImpl(private var _enrollments: Sequence[EnrollmentsInCourse]) extends OnlineCoursePlatform:
 
     override def addCourse(course: Course): Unit =
       if getCourse(course.courseId).isEmpty then
-        _enrollments = Cons(EnrollmentInCourseImpl(course, Nil()), _enrollments)
-      else
-        println(s"A course with ID ${course.courseId} already exists!")
+        _enrollments = Cons(EnrollmentsInCourseImpl(course), _enrollments)
 
     override def findCoursesByCategory(category: String): Sequence[Course] =
       _enrollments.map(e => e.course).filter(c => c.category == category)
@@ -125,25 +122,21 @@ object OnlineCoursePlatform:
 
     override def enrollStudent(studentId: String, courseId: String): Unit =
       _enrollments.find(e => e.course.courseId == courseId) match
-        case Just(e) => e.students = Cons(studentId, e.students)
-        case Empty() => println(s"No course with ID $courseId was found.")
+        case Just(e) => e.students = union(e.students, fromElement(studentId))
+        case _ => ()
 
     override def unenrollStudent(studentId: String, courseId: String): Unit =
       _enrollments.find(e => e.course.courseId == courseId) match
-        case Just(e) => e.students.find(s => s == studentId) match
-          case Just(s) => e.students = e.students.filter(s => s != studentId)
-          case _ => println(s"No student with ID $studentId was found.")
-        case _ => println(s"No course with ID $courseId was found.")
+        case Just(e) if e.students.contains(studentId) => e.students = e.students.remove(studentId)
+        case _ => ()
 
     override def getStudentEnrollments(studentId: String): Sequence[Course] =
-      _enrollments.map(e => e.course).filter(c => isStudentEnrolled(studentId, c.courseId))
+      _enrollments.filter(e => e.students.contains(studentId)).map(e => e.course)
 
     override def isStudentEnrolled(studentId: String, courseId: String): Boolean =
       _enrollments.find(e => e.course.courseId == courseId) match
         case Just(e) => e.students.contains(studentId)
-        case _ =>
-          println(s"No course with ID $courseId was found.")
-          false
+        case _ => false
 
   // Factory method for creating an empty platform instance
   def apply(): OnlineCoursePlatform = OnlineCoursePlatformImpl(Nil())
