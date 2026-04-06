@@ -8,10 +8,10 @@ import scala.util.Random
 class LogicsImpl(private val size: Int) extends Logics:
 
   private val random: Random = Random
-  private val (xi, yi) = (randomPosition, randomPosition)
+  private val (xi, yi) = (randomIndex, randomIndex)
   private var tickCount: Int = 0
 
-  private def randomPosition: Int = random.nextInt(size - 2) + 1
+  private def randomIndex: Int = random.nextInt(size - 2) + 1
 
   override def tick(): Unit = tickCount += 1
 
@@ -37,6 +37,7 @@ class LogicsImpl(private val size: Int) extends Logics:
     isOnCurrentVerticalAxis(x, y) || isOnCurrentHorizontalAxis(x, y) ||
     isOnCurrentForwardDiagonal(x, y) || isOnCurrentBackwardDiagonal(x, y)
 
-  private def isOutOfBound(p: Int): Boolean = p - tickCount < 0 || p + tickCount >= size
+  private def isOutOfBoundsGivenCenterIndex(centerIndex: Int): Boolean = 
+    centerIndex - tickCount < 0 || centerIndex + tickCount >= size
 
-  override def isOver: Boolean = isOutOfBound(xi) || isOutOfBound(yi)
+  override def isOver: Boolean = isOutOfBoundsGivenCenterIndex(xi) || isOutOfBoundsGivenCenterIndex(yi)
