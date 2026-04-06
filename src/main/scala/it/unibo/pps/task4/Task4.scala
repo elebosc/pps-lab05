@@ -1,22 +1,14 @@
 package it.unibo.pps.task4
 
-import it.unibo.pps.util.Sequences.Sequence
-import Sequence.*
+import it.unibo.pps.util.Sequences.Sequence, Sequence.*
 import it.unibo.pps.task1.Course
-
-import scala.annotation.tailrec
 
 object Task4:
 
   object sameCategory:
-    def unapply(courses: Sequence[Course]): Option[String] =
-      @tailrec
-      def _getCategoryIfCommonToAllCourses(s: Sequence[Course])(prevCategory: Option[String]): Option[String] =
-        (s, prevCategory) match
-          case (Nil(), category) => category
-          case (Cons(Course(_, _, _, category), _), Some(prevCategory)) if category != prevCategory => None
-          case (Cons(Course(_, _, _, category), t), _) => _getCategoryIfCommonToAllCourses(t)(Some(category))
-      _getCategoryIfCommonToAllCourses(courses)(None)
+    def unapply(courses: Sequence[Course]): Option[String] = courses match
+      case Nil() => None
+      case Cons(h, _) => if courses.all(c => c.category == h.category) then Some(h.category) else None
 
   def logCategoryComparison(courses: Sequence[Course]): Unit =
     courses match

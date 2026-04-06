@@ -2,7 +2,6 @@ package it.unibo.pps.polyglot.a01b
 
 import it.unibo.pps.polyglot.OptionToOptional
 import it.unibo.pps.util.Optionals.Optional as ScalaOptional, ScalaOptional.*
-import it.unibo.pps.util.Sequences.Sequence, Sequence.{empty => _, flatMap => _, *}
 import it.unibo.pps.util.Set, Set.*
 import it.unibo.pps.util.Streams, Streams.*
 

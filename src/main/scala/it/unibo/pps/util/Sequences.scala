@@ -63,6 +63,8 @@ object Sequences: // Essentially, generic linkedlists
       def reverse(): Sequence[A] = sequence match
         case Cons(h, t) => t.reverse().concat(Cons(h, Nil()))
         case _ => Nil()
+      
+      def all(pred: A => Boolean): Boolean = sequence.find(e => !pred(e)).isEmpty
 
 @main def trySequences(): Unit =
   import Sequences.* 
