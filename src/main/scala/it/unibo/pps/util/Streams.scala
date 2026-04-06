@@ -24,6 +24,9 @@ object Streams:
     def iterate[A](start: A)(f: A => A): Stream[A] =
       cons(start, iterate(f(start))(f))
 
+    def rangeClosed(start: Int, end: Int, step: Int = 1): Stream[Int] =
+      Stream.iterate(start)(_ + step).takeWhile(i => i <= end)
+
     extension [A](stream: Stream[A])
 
       def toList: Sequence[A] = stream match
@@ -37,6 +40,7 @@ object Streams:
       def flatMap[B](f: A => Stream[B]): Stream[B] = stream match
         case Stream.Cons(h, t) => f(h()).concat(t().flatMap(f))
         case _ => Stream.empty()
+        
       def map[B](f: A => B): Streams.Stream[B] = stream.flatMap(x => Stream.cons(f(x), Stream.empty()))
 
       def filter(pred: A => Boolean): Streams.Stream[A] = stream.flatMap:
